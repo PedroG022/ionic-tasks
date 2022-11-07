@@ -3,14 +3,30 @@
     <ion-title>
       Tarefas
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentPopover($event)">
+        <ion-icon name="ellipsis-vertical" slot="icon-only"></ion-icon> 
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
-  <ion-list>
-    <ion-item-sliding *ngFor="let task of taskService.getTasksList(); let i = index" >
-      <ion-item>
+  <ion-segment [(ngModel)]="type">
+    <ion-segment-button value="pending" layout="icon-start">
+      <ion-label>Pendentes</ion-label>
+      <ion-icon name="timer-outline"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="done" layout="icon-start">
+      <ion-label>Concluídas</ion-label>
+      <ion-icon name="checkmark-done-outline"></ion-icon>
+    </ion-segment-button>
+  </ion-segment>
+
+  <ion-list *ngIf="type == 'pending'" >
+    <ion-item-sliding *ngFor="let task of taskService.getTasksList(); let i = index">
+      <ion-item *ngIf="!task.done" >
         <ion-checkbox slot="start" [(ngModel)] = "task.done"></ion-checkbox>
         <ion-label>{{task.name}}</ion-label>
         <ion-badge slot="end" color="warning" *ngIf="task.date.getDate() && !task.done">
@@ -21,6 +37,23 @@
           }}
         </ion-badge>
         <ion-badge slot="end" color="danger" *ngIf="!task.done">Não concluída</ion-badge>
+      </ion-item>
+      <ion-item-options>
+        <ion-item-option (click)="updatePrompt(i, task) ;">
+          <ion-icon name="create-outline" slot="icon-only" ></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deletePrompt(i)">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-list *ngIf="type=='done'">
+    <ion-item-sliding *ngFor="let task of taskService.getTasksList(); let i = index">
+      <ion-item *ngIf="task.done" >
+        <ion-checkbox slot="start" [(ngModel)] = "task.done"></ion-checkbox>
+        <ion-label>{{task.name}}</ion-label>
         <ion-badge slot="end" color="success" *ngIf="task.done">Concluída</ion-badge>
       </ion-item>
       <ion-item-options>

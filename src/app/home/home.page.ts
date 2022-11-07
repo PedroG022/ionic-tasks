@@ -1,6 +1,7 @@
+import { PopoverComponent } from './../popover/popover.component';
 import { TaskService } from './../services/task.service';
 import { Component } from '@angular/core';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, PopoverController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,13 @@ import { AlertController, ToastController } from '@ionic/angular';
 })
 export class HomePage {
 
-  constructor(private alertController: AlertController, public taskService: TaskService, public toastController: ToastController) {}
+  type : string = "pending"
+
+  constructor(
+    private alertController: AlertController, 
+    public taskService: TaskService, 
+    public toastController: ToastController,
+    private popoverController: PopoverController,) {}
 
   async inputPrompt() {
     const alert = await this.alertController.create({
@@ -118,5 +125,13 @@ export class HomePage {
 
     toast.present()
   }
-  
+
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: PopoverComponent,
+      event: ev,
+      translucent: true
+    });
+    return await popover.present()
+  }
 }
